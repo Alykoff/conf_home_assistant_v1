@@ -1,0 +1,118 @@
+title: Home - сервер
+views:
+  - title: Главная
+    # see https://materialdesignicons.com/
+    icon: mdi:home-assistant
+    cards:
+      # - type: vertical-stack
+      #   cards:
+        - type: horizontal-stack
+          cards:
+            - type: vertical-stack
+              cards:
+              - type: markdown
+                content: >
+                  **Текущее состояние**
+              - type: entities
+                show_header_toogle: false
+                entities:
+                  - entity: sensor.time
+                    name: Время
+                    icon: mdi:clock-outline
+                  - entity: sensor.date
+                    name: Дата
+                    icon: mdi:calendar
+
+            # - type: vertical-stack
+            #   cards:
+            #     - type: markdown
+            #       content: >
+            #         **Графики**
+                
+            #     - type: horizontal-stack
+            #       cards:
+            #         - type: gauge
+            #           name: Загрузка CPU
+            #           unit: '%'
+            #           entity: sensor.processor_use
+            #           severity:
+            #             green: 0
+            #             yellow: 60
+            #             red: 85
+            #         - type: gauge
+            #           name: Mem
+            #           unit: '%'
+            #           entity: sensor.memory_use_percent
+            #           severity:
+            #             green: 0
+            #             yellow: 60
+            #             red: 85
+
+            #     - type: horizontal-stack
+            #       cards:
+            #         - type: gauge
+            #           name: Занято место на диске
+            #           unit: '%'
+            #           entity: sensor.disk_use_percent
+            #           severity:
+            #             green: 0
+            #             yellow: 60
+            #             red: 85
+            #         - type: gauge
+            #           name: Свободное место
+            #           unit: 'Гб'
+            #           entity: sensor.disk_free
+            #           severity:
+            #             red: 2
+            #             yellow: 6
+            #             green: 8
+        - type: horizontal-stack
+          cards:
+            - type: history-graph
+              entities: 
+                - sensor.room_1_temperature
+                - sensor.room_2_temperature
+              hours_to_show: 3
+              refresh_interval: 20
+        - type: horizontal-stack
+          cards:
+            - type: history-graph
+              entities:
+                - sensor.room_1_humidity
+                - sensor.room_2_humidity
+              hours_to_show: 3
+              refresh_interval: 20
+        - type: horizontal-stack
+          cards:
+            - type: history-graph
+              entities:
+                - sensor.room_1_pressure
+                - sensor.room_2_pressure
+              hours_to_show: 3
+              refresh_interval: 20
+        - type: horizontal-stack
+          cards:
+            - type: entities
+              show_header_toggle: false
+              entities:   
+                - entity: sensor.gircone_1
+  - title: Погода
+    icon: mdi:weather-partly-snowy-rainy
+    cards:
+      - type: weather-forecast
+        entity: weather.iort
+  
+  - title: Люди
+    icon: mdi:account-heart
+    cards:  
+      - type: entities
+        name: Людиы
+        show_header_toggle: false
+        entities:
+          - entity: device_tracker.galaxymyww50
+            name: Юлек
+          - entity: device_tracker.tmt
+            name: Гали
+            secondary_info: last-changed
+          # - entity: device_tracker.al_gb_bace_3160
+          #   name: Ильдар

@@ -1,0 +1,2 @@
+db_url: postgresql://admin:admin@localhost:5432/statistics
+purge_keep_days: 60

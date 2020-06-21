@@ -1,0 +1,13 @@
+*.swp
+*.log
+*.db
+*.db-shm
+*.db-wal
+secrets.yaml
+.DS_Store
+
+themes/
+tts/
+.cloud/
+.storage/
+deps/

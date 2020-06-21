@@ -1,0 +1,139 @@
+homeassistant:
+  name: Йирт
+  latitude: !secret latitude
+  longitude: !secret longitude
+  elevation: !secret elevation
+  unit_system: metric
+  time_zone: !secret time_zone
+
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+
+lovelace:
+  mode: yaml
+
+frontend:
+  themes: !include_dir_merge_named themes
+    
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+# sensor: !include_dir_merge_list includes/sensor
+sensor:
+  - platform: time_date
+    display_options:
+      - 'time'
+      - 'date'
+      - 'time_date'
+  # - platform: systemmonitor
+  #   resources:
+  #     - type: processor_use
+  #     - type: disk_use_percent
+  #       arg: /
+  #     - type: memory_use_percent
+  #     - type: last_boot
+  #     - type: disk_free
+  #       arg: /
+  # нужно же очень часто опрашивать???
+  - platform: rest
+    name: gircone_1
+    resource: http://192.168.0.14/sec/?pt=0&cmd=get
+    # device_class: door
+    # friendly_name: 'Состояние двериs'
+    value_template: >
+      {% set val = value.split("/")[0] %}
+      {% if val == 'ON' %}
+        OFF
+      {% elif val == 'OFF' %}
+        ON
+      {% endif %}
+    scan_interval: 2
+  - platform: rest
+    name: room_1_bmx280
+    resource: http://192.168.0.14/sec/?pt=7&scl=8&i2c_dev=bmx280&i2c_par=3
+  - platform: rest
+    name: room_2_bmx280
+    resource: http://192.168.0.14/sec/?pt=9&scl=8&i2c_dev=bmx280&i2c_par=3
+  - platform: template
+    sensors:
+      room_1_temperature:
+        value_template: "{{ states('sensor.room_1_bmx280').split('/')[0][5:] }}"
+        unit_of_measurement: '°C'
+        device_class: temperature
+        friendly_name: 'Температура #1'
+      room_1_humidity:
+        value_template: "{{ states('sensor.room_1_bmx280').split('/')[2][4:] }}"
+        unit_of_measurement: '%'
+        device_class: humidity
+        friendly_name: 'Влажность #1'
+      room_1_pressure:
+        value_template: "{{ states('sensor.room_1_bmx280').split('/')[1][6:] }}"
+        unit_of_measurement: 'мм.рт.c'
+        device_class: pressure
+        friendly_name: 'Давление #1'
+      room_2_temperature:
+        value_template: "{{ states('sensor.room_2_bmx280').split('/')[0][5:] }}"
+        unit_of_measurement: '°C'
+        device_class: temperature
+        friendly_name: 'Температура #2'
+      room_2_humidity:
+        value_template: "{{ states('sensor.room_2_bmx280').split('/')[2][4:] }}"
+        unit_of_measurement: '%'
+        device_class: humidity
+        friendly_name: 'Влажность #2'
+      room_2_pressure:
+        value_template: "{{ states('sensor.room_2_bmx280').split('/')[1][6:] }}"
+        unit_of_measurement: 'мм.рт.c'
+        device_class: pressure
+        friendly_name: 'Давление #2'
+    #  http://192.168.0.14/sec/?pt=7&scl=8&i2c_dev=bmx280&i2c_par=1:60000:REGEX((.*?))
+  - platform: rest
+    name: _room_1_temperature
+    unit_of_measurement: '°C'
+    device_class: temperature
+    resource: http://192.168.0.14/sec/?pt=7&scl=8&i2c_dev=bmx280&i2c_par=1
+  - platform: rest
+    name: _room_1_humidity 
+    unit_of_measurement: '%'
+    device_class: humidity
+    resource: http://192.168.0.14/sec/?pt=7&scl=8&i2c_dev=bmx280&i2c_par=2
+  - platform: rest
+    name: room1_pressure
+    unit_of_measurement: 'мм.рт.c'
+    device_class: pressure
+    resource: http://192.168.0.14/sec/?pt=7&scl=8&i2c_dev=bmx280&i2c_par=0
+
+
+  - platform: rest
+    name: _room_2_temperature
+    unit_of_measurement: '°C'
+    device_class: temperature
+    #  http://192.168.0.14/sec/?pt=7&scl=8&i2c_dev=bmx280&i2c_par=1:60000:REGEX((.*?))
+    resource: http://192.168.0.14/sec/?pt=9&scl=8&i2c_dev=bmx280&i2c_par=1
+  - platform: rest
+    name: _room_2_humidity
+    unit_of_measurement: '%'
+    device_class: humidity
+    resource: http://192.168.0.14/sec/?pt=9&scl=8&i2c_dev=bmx280&i2c_par=2
+  - platform: rest
+    name: room2_pressure
+    unit_of_measurement: 'мм.рт.c'
+    device_class: pressure
+    resource: http://192.168.0.14/sec/?pt=9&scl=8&i2c_dev=bmx280&i2c_par=0
+# - platform: sql
+#   db_url: 
+#   queries:
+#     - name: psgrs db
+#       query: 'select 50 from ...'
+#       column: 'value'
+#       unit_of_measurement: MB
+# recorder: !include includes/recorder.yaml
